@@ -1,27 +1,19 @@
 package training.classic_puzzle_easy;
 
-import java.util.*;
-import java.io.*;
-import java.math.*;
+import java.util.Scanner;
 
-/**
- * Auto-generated code below aims at helping you parse
- * the standard input according to the problem statement.
- **/
+// Solution with no bit operators
+// Tried to get something easy to read
 class ChuckNorris {
-
 	public static void main(String args[]) {
 		Scanner in = new Scanner(System.in);
 		String message = in.nextLine();
-
-		// Solution with no bit operators
-		// Tried to get something easy to read
 
 		StringBuilder strBuilder = new StringBuilder();
 		char lastBit = '#';
 
 		for (char letter : message.toCharArray()) {
-			char[] letterBits = Integer.toBinaryString((int)letter).toCharArray();
+			char[] letterBits = Integer.toBinaryString((int) letter).toCharArray();
 
 			for (int i = 0; i < (7 - letterBits.length); i++) {
 				appendNewBit(strBuilder, lastBit, '0');
@@ -41,12 +33,10 @@ class ChuckNorris {
 		if (currentBit != lastBit) {
 			if (currentBit == '1') {
 				strBuilder.append(" 0 0");
-			}
-			else {
+			} else {
 				strBuilder.append(" 00 0");
 			}
-		}
-		else {
+		} else {
 			strBuilder.append("0");
 		}
 	}

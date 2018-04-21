@@ -1,11 +1,9 @@
 package training.classic_puzzle_medium;
 
-import java.util.*;
-import java.io.*;
-import java.math.*;
+import java.util.Arrays;
+import java.util.Scanner;
 
 class NetworkCabling {
-
 	public static void main(String args[]) {
 		Scanner in = new Scanner(System.in);
 
@@ -37,5 +35,4 @@ class NetworkCabling {
 
 		System.out.println(result);
 	}
-
 }

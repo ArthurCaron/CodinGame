@@ -1,13 +1,7 @@
 package training.classic_puzzle_easy;
 
-import java.util.*;
-import java.io.*;
-import java.math.*;
+import java.util.Scanner;
 
-/**
- * Auto-generated code below aims at helping you parse
- * the standard input according to the problem statement.
- **/
 class Defibrillators {
 	private static final int NAME = 1;
 	private static final int LONGITUDE = 4;
@@ -50,6 +44,6 @@ class Defibrillators {
 	private static double calculateGpsCoordinatesDistance(Double longitudeA, Double latitudeA, Double longitudeB, Double latitudeB) {
 		Double x = (longitudeB - longitudeA) * Math.cos((latitudeA + latitudeB) / 2);
 		Double y = latitudeB - latitudeA;
-		return Math.sqrt(x*x + y*y) * EARTH_RADIUS;
+		return Math.sqrt(x * x + y * y) * EARTH_RADIUS;
 	}
 }

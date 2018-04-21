@@ -1,11 +1,9 @@
 package training.classic_puzzle_medium;
 
-import java.util.*;
-import java.io.*;
-import java.math.*;
+import java.util.HashMap;
+import java.util.Scanner;
 
 class TheLastCrusadeEpisode1 {
-
 	public static void main(String args[]) {
 		Scanner in = new Scanner(System.in);
 		int width = in.nextInt(); // number of columns.
@@ -47,7 +45,7 @@ class Room {
 	private static final String RIGHT = "RIGHT";
 	private static final String BOTTOM = "BOTTOM";
 
-	private HashMap<String, String> destinations = new HashMap();
+	private HashMap<String, String> destinations = new HashMap<>();
 
 	private Room(String topDestination, String leftDestination, String rightDestination) {
 		destinations.put(TOP, topDestination);
@@ -55,17 +53,17 @@ class Room {
 		destinations.put(RIGHT, rightDestination);
 	}
 
-	public boolean isDestinationLeft(String origin) {
+	boolean isDestinationLeft(String origin) {
 		return destinations.get(origin).equals(LEFT);
 	}
-	public boolean isDestinationRight(String origin) {
+	boolean isDestinationRight(String origin) {
 		return destinations.get(origin).equals(RIGHT);
 	}
-	public boolean isDestinationBottom(String origin) {
+	boolean isDestinationBottom(String origin) {
 		return destinations.get(origin).equals(BOTTOM);
 	}
 
-	public static Room getRoom(int type) {
+	static Room getRoom(int type) {
 		Room room = null;
 		switch (type) {
 			case 0:

@@ -1,15 +1,8 @@
 package training.classic_puzzle_easy;
 
-import java.util.*;
-import java.io.*;
-import java.math.*;
+import java.util.Scanner;
 
-/**
- * Auto-generated code below aims at helping you parse
- * the standard input according to the problem statement.
- **/
 class Temperatures {
-
 	public static void main(String args[]) {
 		Scanner in = new Scanner(System.in);
 		int n = in.nextInt(); // the number of temperatures to analyse

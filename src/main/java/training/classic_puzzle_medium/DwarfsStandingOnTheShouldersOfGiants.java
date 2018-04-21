@@ -1,6 +1,8 @@
 package training.classic_puzzle_medium;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 // I had to rename Node to DwarfsNode because of conflits with BenderEpisode1's BenderNode class (also renamed)
 class DwarfsStandingOnTheShouldersOfGiants {
@@ -41,12 +43,11 @@ class DwarfsStandingOnTheShouldersOfGiants {
 }
 
 class DwarfsNode {
-	public final List<DwarfsNode> destinationNodes = new ArrayList();
-	public final List<DwarfsNode> sourceNodes = new ArrayList();
-	private int distanceToEndOfGraph;
+	final List<DwarfsNode> destinationNodes = new ArrayList<>();
+	final List<DwarfsNode> sourceNodes = new ArrayList<>();
 
-	public static List<DwarfsNode> findStartingNodes(DwarfsNode[] nodes) {
-		List<DwarfsNode> startingNodes = new ArrayList();
+	static List<DwarfsNode> findStartingNodes(DwarfsNode[] nodes) {
+		List<DwarfsNode> startingNodes = new ArrayList<>();
 
 		for (DwarfsNode node : nodes) {
 			if (node != null) {
@@ -59,8 +60,8 @@ class DwarfsNode {
 		return startingNodes;
 	}
 
-	public int floodFill() {
-		distanceToEndOfGraph = 1;
+	int floodFill() {
+		int distanceToEndOfGraph = 1;
 
 		for (DwarfsNode node : destinationNodes) {
 			distanceToEndOfGraph = Math.max(

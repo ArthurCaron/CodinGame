@@ -1,20 +1,14 @@
 package training.classic_puzzle_medium;
 
-import java.util.*;
-import java.io.*;
-import java.math.*;
+import java.util.LinkedList;
+import java.util.Scanner;
 
-/**
- * Auto-generated code below aims at helping you parse
- * the standard input according to the problem statement.
- **/
 class War {
-
 	public static void main(String args[]) {
 		Scanner in = new Scanner(System.in);
 
-		LinkedList<Integer> player1Cards = new LinkedList();
-		LinkedList<Integer> player2Cards = new LinkedList();
+		LinkedList<Integer> player1Cards = new LinkedList<>();
+		LinkedList<Integer> player2Cards = new LinkedList<>();
 
 		int n = in.nextInt();
 		for (int i = 0; i < n; i++) {
@@ -27,8 +21,8 @@ class War {
 		}
 
 
-		LinkedList<Integer> player1Buffer = new LinkedList();
-		LinkedList<Integer> player2Buffer = new LinkedList();
+		LinkedList<Integer> player1Buffer = new LinkedList<>();
+		LinkedList<Integer> player2Buffer = new LinkedList<>();
 		int rounds = 0;
 
 		while (player1Cards.size() != 0 && player2Cards.size() != 0) {
@@ -74,23 +68,20 @@ class War {
 		}
 	}
 
-	public static int getCardValue(String playerCard) {
+	private static int getCardValue(String playerCard) {
 		String cardSymbol = playerCard.substring(0, playerCard.length() - 1);
 
-		if (cardSymbol.equals("J")) {
-			return 11;
-		}
-		else if (cardSymbol.equals("Q")) {
-			return 12;
-		}
-		else if (cardSymbol.equals("K")) {
-			return 13;
-		}
-		else if (cardSymbol.equals("A")) {
-			return 14;
-		}
-		else {
-			return Integer.parseInt(cardSymbol);
+		switch (cardSymbol) {
+			case "J":
+				return 11;
+			case "Q":
+				return 12;
+			case "K":
+				return 13;
+			case "A":
+				return 14;
+			default:
+				return Integer.parseInt(cardSymbol);
 		}
 	}
 }

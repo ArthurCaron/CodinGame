@@ -1,6 +1,8 @@
 package training.classic_puzzle_medium;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 class TeadsSponsoredContest {
 	private static final int MAX_ID_VALUE_POSSIBLE = 200000;
@@ -35,24 +37,23 @@ class TeadsSponsoredContest {
 
 		int distanceFromEndOfGraph = furthestNode.floodFill(furthestNode);
 
-		System.out.println( (distanceFromEndOfGraph + 1) / 2 );
+		System.out.println((distanceFromEndOfGraph + 1) / 2);
 	}
 }
 
 class TeadsNode {
-	public final List<TeadsNode> linkedNodes = new ArrayList();
+	final List<TeadsNode> linkedNodes = new ArrayList<>();
 	private int distanceFromEndOfGraph;
 	private TeadsNode furthestNode;
 
-	public TeadsNode findFurthestNode() {
+	TeadsNode findFurthestNode() {
 		furthestNode = this;
 
 		for (TeadsNode node : linkedNodes) {
 			if (node.distanceFromEndOfGraph == (distanceFromEndOfGraph - 1)) {
 				if (node.distanceFromEndOfGraph == 0) {
 					furthestNode = node;
-				}
-				else {
+				} else {
 					node.findFurthestNode();
 					furthestNode = node.furthestNode;
 				}
@@ -62,7 +63,7 @@ class TeadsNode {
 		return furthestNode;
 	}
 
-	public int floodFill(TeadsNode caller) {
+	int floodFill(TeadsNode caller) {
 		distanceFromEndOfGraph = 0;
 
 		for (TeadsNode node : linkedNodes) {

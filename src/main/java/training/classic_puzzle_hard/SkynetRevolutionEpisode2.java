@@ -1,9 +1,10 @@
 package training.classic_puzzle_hard;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 class SkynetRevolutionEpisode2 {
-
 	public static void main(String args[]) {
 		Scanner in = new Scanner(System.in);
 		int numberOfNodes = in.nextInt(); // the total number of nodes in the level, including the gateways
@@ -41,15 +42,15 @@ class Skynet2Graph {
 	Node[] nodes;
 	List<Node> exitNodes;
 
-	public Skynet2Graph(int numberOfNodes) {
+	Skynet2Graph(int numberOfNodes) {
 		nodes = new Node[numberOfNodes];
 		for (int i = 0; i < numberOfNodes; i++) {
 			nodes[i] = new Node(i);
 		}
-		exitNodes = new ArrayList();
+		exitNodes = new ArrayList<>();
 	}
 
-	public Link findLinkToCut(Node agentNode) {
+	Link findLinkToCut(Node agentNode) {
 		Link linkToCut = null;
 
 		// We try to find if there is a direct link to an exit node
@@ -110,7 +111,7 @@ class Skynet2Graph {
 	}
 
 	private List<Node> findNodesToDoubleExit() {
-		List<Node> nodesToDoubleExit = new ArrayList();
+		List<Node> nodesToDoubleExit = new ArrayList<>();
 
 		for (Node exitNode : exitNodes) {
 			for (Node node : exitNode.linkedNodes) {
@@ -129,8 +130,7 @@ class Skynet2Graph {
 				node.distanceFromAgent = distanceFromAgent;
 				if (node.countExitNodes() > 0) {
 					floodFill(node, distanceFromAgent);
-				}
-				else {
+				} else {
 					floodFill(node, distanceFromAgent + 1);
 				}
 			}
@@ -143,34 +143,27 @@ class Skynet2Graph {
 		}
 	}
 
-	public void removeLink(Link link) {
+	void removeLink(Link link) {
 		removeLink(link.node1, link.node2);
 		removeLink(link.node2, link.node1);
 	}
 
 	private void removeLink(Node node1, Node node2) {
-		Iterator<Node> iterator = node1.linkedNodes.iterator();
-
-		while (iterator.hasNext()) {
-			Node node = iterator.next();
-			if (node.id == node2.id) {
-				iterator.remove();
-			}
-		}
+		node1.linkedNodes.removeIf(node -> node.id == node2.id);
 	}
 }
 
 class Node {
 	int id;
 	boolean isExitNode;
-	List<Node> linkedNodes = new ArrayList();
+	List<Node> linkedNodes = new ArrayList<>();
 	int distanceFromAgent = -1;
 
-	public Node(int id) {
+	Node(int id) {
 		this.id = id;
 	}
 
-	public int countExitNodes() {
+	int countExitNodes() {
 		int count = 0;
 
 		for (Node linkedNode : linkedNodes) {
@@ -182,7 +175,7 @@ class Node {
 		return count;
 	}
 
-	public Node getAnyLinkedExitNode() {
+	Node getAnyLinkedExitNode() {
 		Node node = null;
 
 		for (Node linkedNode : linkedNodes) {
@@ -199,7 +192,7 @@ class Link {
 	Node node1;
 	Node node2;
 
-	public Link(Node node1, Node node2) {
+	Link(Node node1, Node node2) {
 		this.node1 = node1;
 		this.node2 = node2;
 	}

@@ -1,11 +1,9 @@
 package training.classic_puzzle_medium;
 
-import java.util.*;
-import java.io.*;
-import java.math.*;
+import java.util.LinkedList;
+import java.util.Scanner;
 
 class MayanCalculation {
-
 	private static final int BASE = 20;
 
 	public static void main(String args[]) {
@@ -62,16 +60,17 @@ class MayanCalculation {
 	}
 
 	private static long calculate(Digit[] firstNumber, String operation, Digit[] secondNumber) {
-		if (operation.equals("+")) {
-			return digitsToLong(firstNumber) + digitsToLong(secondNumber);
-		} else if (operation.equals("-")) {
-			return digitsToLong(firstNumber) - digitsToLong(secondNumber);
-		} else if (operation.equals("*")) {
-			return digitsToLong(firstNumber) * digitsToLong(secondNumber);
-		} else if (operation.equals("/")) {
-			return digitsToLong(firstNumber) / digitsToLong(secondNumber);
-		} else {
-			return 0L;
+		switch (operation) {
+			case "+":
+				return digitsToLong(firstNumber) + digitsToLong(secondNumber);
+			case "-":
+				return digitsToLong(firstNumber) - digitsToLong(secondNumber);
+			case "*":
+				return digitsToLong(firstNumber) * digitsToLong(secondNumber);
+			case "/":
+				return digitsToLong(firstNumber) / digitsToLong(secondNumber);
+			default:
+				return 0L;
 		}
 	}
 
@@ -86,7 +85,7 @@ class MayanCalculation {
 	}
 
 	private static LinkedList<Digit> longToDigits(Digit[] numerals, long value) {
-		LinkedList<Digit> result = new LinkedList();
+		LinkedList<Digit> result = new LinkedList<>();
 
 		do {
 			result.addFirst(numerals[(int) (value % 20)]);
@@ -104,7 +103,6 @@ class MayanCalculation {
 }
 
 class Digit {
-
 	int height;
 	private int width;
 	int evaluation;

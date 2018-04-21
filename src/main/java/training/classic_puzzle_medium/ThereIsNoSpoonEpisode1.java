@@ -1,14 +1,8 @@
 package training.classic_puzzle_medium;
 
-import java.util.*;
-import java.io.*;
-import java.math.*;
+import java.util.Scanner;
 
-/**
- * Don't let the machines win. You are humanity's last hope...
- **/
 class ThereIsNoSpoonEpisode1 {
-
 	public static void main(String args[]) {
 		Scanner in = new Scanner(System.in);
 		int xSize = in.nextInt(); // the number of cells on the X axis

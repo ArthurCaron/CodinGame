@@ -1,8 +1,6 @@
 package training.classic_puzzle_medium;
 
-import java.util.*;
-import java.io.*;
-import java.math.*;
+import java.util.Scanner;
 
 class MarsLanderEpisode2 {
 	public static void main(String args[]) {
@@ -34,16 +32,16 @@ class Capsule {
 	private static final int MAX_ROTATION_ANGLE_PER_SECOND = 15;
 	private static final int ROTATION_ANGLE_FOR_DRIFT = 22; // can't figure out how to actually calculate this value, found it by tinkering with it for a while
 
-	public static Capsule instance;
+	static Capsule instance;
 
-	public int fuel;
-	public int rotationAngle;
-	public double thrusterPower;
-	public Vector2d position;
-	public Vector2d velocity;
-	public Vector2d acceleration;
+	private int fuel;
+	int rotationAngle;
+	double thrusterPower;
+	Vector2d position;
+	private Vector2d velocity;
+	private Vector2d acceleration;
 
-	public Capsule(int x, int y, int xVelocity, int yVelocity, int fuel, int rotationAngle, int thrusterPower) {
+	Capsule(int x, int y, int xVelocity, int yVelocity, int fuel, int rotationAngle, int thrusterPower) {
 		this.fuel = fuel;
 		this.rotationAngle = rotationAngle;
 		this.thrusterPower = (double)thrusterPower;
@@ -61,7 +59,7 @@ class Capsule {
 		this.acceleration = new Vector2d(capsule.acceleration.x, capsule.acceleration.y);
 	}
 
-	public void goToward(Vector2d destination) {
+	void goToward(Vector2d destination) {
 		if (destination.x == Capsule.instance.position.x) {
 			land(destination.y);
 		}
@@ -145,12 +143,7 @@ class Capsule {
 			distanceToGround += simulationCapsule.velocity.y;
 		}
 
-		if (distanceToGround <= 0) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return distanceToGround <= 0;
 	}
 
 	private int nextRotationAngleToward(int aimedRotationAngle) {
@@ -198,25 +191,25 @@ class Capsule {
 }
 
 class Land {
-	public static Land instance;
+	static Land instance;
 
 	private Vector2d[] land;
 	private int landPoints;
 	private int landingGroundIndex = 0;
 
-	public Land(int landPoints) {
+	Land(int landPoints) {
 		this.landPoints = landPoints;
 		land = new Vector2d[landPoints];
 	}
 
-	public void addPoints(Scanner in) {
+	void addPoints(Scanner in) {
 		for (int i = 0; i < landPoints; i++) {
 			land[i] = new Vector2d(in.nextInt(), in.nextInt());
 		}
 		findLandingGroundIndex();
 	}
 
-	public Vector2d getDestination() {
+	Vector2d getDestination() {
 		return new Vector2d(findLandingGroundX(), findLandingGroundY());
 	}
 
@@ -251,7 +244,7 @@ class Vector2d {
 	double x;
 	double y;
 
-	public Vector2d(double x, double y) {
+	Vector2d(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}

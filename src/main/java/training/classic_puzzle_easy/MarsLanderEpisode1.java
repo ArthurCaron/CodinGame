@@ -1,13 +1,7 @@
 package training.classic_puzzle_easy;
 
-import java.util.*;
-import java.io.*;
-import java.math.*;
+import java.util.Scanner;
 
-/**
- * Auto-generated code below aims at helping you parse
- * the standard input according to the problem statement.
- **/
 class MarsLanderEpisode1 {
 	private static final double MARS_GRAVITY = 3.711;
 	private static final double MAX_THRUSTER_POWER = 4.0;
@@ -24,7 +18,8 @@ class MarsLanderEpisode1 {
 		landY = new int[surfaceN];
 		for (int i = 0; i < surfaceN; i++) {
 			landX[i] = in.nextInt(); // X coordinate of a surface point. (0 to 6999)
-			landY[i] = in.nextInt(); // Y coordinate of a surface point. By linking all the points together in a sequential fashion, you form the surface of Mars.
+			landY[i] = in.nextInt(); // Y coordinate of a surface point. By linking all the points together in a sequential fashion, you form the
+			// surface of Mars.
 		}
 
 		// game loop
@@ -38,13 +33,12 @@ class MarsLanderEpisode1 {
 			int capsuleAcceleration = in.nextInt(); // the thrust power (0 to 4).
 
 			double distanceToGround = capsuleY - findGroundYBeneathCapsule(capsuleX);
-			if (needToBrake(distanceToGround, (double)capsuleAcceleration, (double)vVelocity)) {
+			if (needToBrake(distanceToGround, (double) capsuleAcceleration, (double) vVelocity)) {
 				if (capsuleAcceleration < MAX_THRUSTER_POWER) {
 					capsuleAcceleration++;
 				}
 				System.out.println(rotate + " " + capsuleAcceleration);
-			}
-			else {
+			} else {
 				if (capsuleAcceleration > 0) {
 					capsuleAcceleration--;
 				}

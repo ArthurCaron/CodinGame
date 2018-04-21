@@ -1,28 +1,18 @@
 package training.classic_puzzle_medium;
 
-import java.util.*;
-import java.io.*;
-import java.math.*;
+import java.util.Scanner;
 
-/**
- * Auto-generated code below aims at helping you parse
- * the standard input according to the problem statement.
- **/
 class ShadowsOfTheKnightEpisode1 {
-	public static int minX = 0;
-	public static int minY = 0;
-	public static int maxX;
-	public static int maxY;
-	public static int batX;
-	public static int batY;
+	private static int minX = 0;
+	private static int minY = 0;
 
 	public static void main(String args[]) {
 		Scanner in = new Scanner(System.in);
-		maxX = in.nextInt(); // width of the building.
-		maxY = in.nextInt(); // height of the building.
+		int maxX = in.nextInt();
+		int maxY = in.nextInt();
 		in.nextInt(); // maximum number of turns before game over.
-		batX = in.nextInt();
-		batY = in.nextInt();
+		int batX = in.nextInt();
+		int batY = in.nextInt();
 
 		// game loop
 		while (true) {

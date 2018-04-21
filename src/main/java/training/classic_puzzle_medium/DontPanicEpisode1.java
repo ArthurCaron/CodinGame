@@ -1,15 +1,8 @@
 package training.classic_puzzle_medium;
 
-import java.util.*;
-import java.io.*;
-import java.math.*;
+import java.util.Scanner;
 
-/**
- * Auto-generated code below aims at helping you parse
- * the standard input according to the problem statement.
- **/
 class DontPanicEpisode1 {
-
 	public static void main(String args[]) {
 		Scanner in = new Scanner(System.in);
 		int nbFloors = in.nextInt(); // number of floors

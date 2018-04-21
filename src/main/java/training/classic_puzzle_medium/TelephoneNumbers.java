@@ -1,8 +1,6 @@
 package training.classic_puzzle_medium;
 
-import java.util.*;
-import java.io.*;
-import java.math.*;
+import java.util.Scanner;
 
 class TelephoneNumbers {
 	public static void main(String args[]) {
@@ -22,7 +20,7 @@ class TelephoneNumbers {
 class TelephoneGraph {
 	private TelephoneGraph[] graphs = new TelephoneGraph[10];
 
-	public void add(String numbers) {
+	void add(String numbers) {
 		if (numbers.length() > 0) {
 			int firstNumber = Integer.parseInt(numbers.substring(0, 1));
 			if (graphs[firstNumber] == null) {
@@ -34,11 +32,11 @@ class TelephoneGraph {
 		}
 	}
 
-	public int count() {
+	int count() {
 		int count = 0;
-		for (int i = 0; i < graphs.length; i++) {
-			if (graphs[i] != null) {
-				count += graphs[i].count() + 1;
+		for (TelephoneGraph graph : graphs) {
+			if (graph != null) {
+				count += graph.count() + 1;
 			}
 		}
 		return count;

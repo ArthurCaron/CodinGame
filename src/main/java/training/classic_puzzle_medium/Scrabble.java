@@ -1,8 +1,7 @@
 package training.classic_puzzle_medium;
 
-import java.util.*;
-import java.io.*;
-import java.math.*;
+import java.util.HashMap;
+import java.util.Scanner;
 
 class Scrabble {
 	public static void main(String args[]) {
@@ -41,8 +40,7 @@ class Scrabble {
 		for (Character letter : word.toCharArray()) {
 			if (wordLettersCount.containsKey(letter)) {
 				wordLettersCount.put(letter, wordLettersCount.get(letter) + 1);
-			}
-			else {
+			} else {
 				wordLettersCount.put(letter, 1);
 			}
 
@@ -70,8 +68,7 @@ class Scrabble {
 		for (Character letter : word.toCharArray()) {
 			if (availableLetters.containsKey(letter)) {
 				availableLetters.put(letter, availableLetters.get(letter) + 1);
-			}
-			else {
+			} else {
 				availableLetters.put(letter, 1);
 			}
 		}

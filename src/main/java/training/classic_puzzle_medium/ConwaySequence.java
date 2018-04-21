@@ -1,15 +1,14 @@
 package training.classic_puzzle_medium;
 
-import java.util.*;
-import java.io.*;
-import java.math.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 class ConwaySequence {
-
 	public static void main(String args[]) {
 		Scanner in = new Scanner(System.in);
 
-		List<Integer> currentLine = new ArrayList();
+		List<Integer> currentLine = new ArrayList<>();
 		currentLine.add(in.nextInt());
 
 		for (int i = in.nextInt() - 1; i > 0; i--) {
@@ -25,8 +24,8 @@ class ConwaySequence {
 		System.out.println(result.toString().trim());
 	}
 
-	public static List<Integer> getNextLine(List<Integer> currentLine) {
-		List<Integer> nextLine = new ArrayList();
+	private static List<Integer> getNextLine(List<Integer> currentLine) {
+		List<Integer> nextLine = new ArrayList<>();
 
 		int currentValue = currentLine.get(0);
 		int currentCount = 0;

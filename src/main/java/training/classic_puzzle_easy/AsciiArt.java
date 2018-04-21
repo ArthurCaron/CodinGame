@@ -1,15 +1,8 @@
 package training.classic_puzzle_easy;
 
-import java.util.*;
-import java.io.*;
-import java.math.*;
+import java.util.Scanner;
 
-/**
- * Auto-generated code below aims at helping you parse
- * the standard input according to the problem statement.
- **/
 class AsciiArt {
-
 	public static void main(String args[]) {
 		Scanner in = new Scanner(System.in);
 		int letterWidth = in.nextInt();
@@ -35,7 +28,7 @@ class AsciiArt {
 					letterPosition = QUESTION_MARK * letterWidth;
 				}
 
-				strBuilder.append(ROW.substring(letterPosition, letterPosition + letterWidth));
+				strBuilder.append(ROW, letterPosition, letterPosition + letterWidth);
 			}
 
 			strBuilder.append(System.getProperty("line.separator"));

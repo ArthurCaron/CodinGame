@@ -1,11 +1,9 @@
 package training.classic_puzzle_medium;
 
-import java.util.*;
-import java.io.*;
-import java.math.*;
+import java.util.Arrays;
+import java.util.Scanner;
 
 class TheGift {
-
 	public static void main(String args[]) {
 		Scanner in = new Scanner(System.in);
 		int participants = in.nextInt();
@@ -21,8 +19,7 @@ class TheGift {
 
 		if (totalBudget < giftPrice) {
 			System.out.println("IMPOSSIBLE");
-		}
-		else {
+		} else {
 			Arrays.sort(budgets);
 
 			for (int i = 0; i < participants; i++) {
@@ -31,8 +28,7 @@ class TheGift {
 				if (budgets[i] < medianPrice) {
 					giftPrice -= budgets[i];
 					System.out.println(budgets[i]);
-				}
-				else {
+				} else {
 					giftPrice -= medianPrice;
 					System.out.println(medianPrice);
 				}
