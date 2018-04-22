@@ -3,8 +3,6 @@ package multiplayer;
 import java.util.*;
 
 // Please note that this type of code is written quickly and without much regard for proper architecture or code conventions :)
-// Also, I don't have the screenshots with all the rules detailed because I didn't take them at the time,
-// and outside the contest with expert rules, my code doesn't work (and I'm too lazy, for now at least, to modify them to get to bronze league)
 class Code4Life {
 	private static Code4LifeGameState gs = new Code4LifeGameState();
 	private static Code4LifeGameState nextGs = null;
@@ -35,10 +33,13 @@ class Code4Life {
 			gs.molecules = new Molecules(Utils.intToMap(in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt(), in.nextInt()));
 
 			int sampleCount = in.nextInt();
+			gs.diagnosis.availableSamples = new ArrayList<>();
+			gs.diagnosis.opponentSamples = new ArrayList<>();
 			for (int i = 0; i < sampleCount; i++) {
 				gs.diagnosis.addSample(
 						gs,
-						new Sample(in.nextInt(),
+						new Sample(
+								in.nextInt(),
 								in.nextInt(),
 								in.nextInt(),
 								in.next(),
@@ -50,7 +51,7 @@ class Code4Life {
 
 			System.err.println("Previous guess: ");
 			if (nextGs != null) {
-				nextGs.print();
+				//				nextGs.print();
 			}
 			System.err.println("Current: ");
 			gs.print();
@@ -64,12 +65,22 @@ class Code4Life {
 			} else {
 				if (Mod.SAMPLES.equals(gs.myRobot.target)) {
 					if (gs.diagnosis.mySamples.size() < 3) {
-						if (Utils.countTotal(gs.myRobot.expertise) >= 15) {
-							new Connect(3).print();
-							nextGs = gs.computeAction(new Connect(3));
-						} else if (Utils.countTotal(gs.myRobot.expertise) >= 6) {
-							new Connect(2).print();
-							nextGs = gs.computeAction(new Connect(2));
+						if (Utils.countTotal(gs.myRobot.expertise) + gs.diagnosis.mySamples.size() >= 12) {
+							if (gs.diagnosis.mySamples.size() == 2 && gs.diagnosis.countByType(2, Diagnosis.MY_SAMPLES) == 0) {
+								new Connect(2).print();
+								nextGs = gs.computeAction(new Connect(2));
+							} else {
+								new Connect(3).print();
+								nextGs = gs.computeAction(new Connect(3));
+							}
+						} else if (Utils.countTotal(gs.myRobot.expertise) + gs.diagnosis.mySamples.size() >= 5) {
+							if (gs.diagnosis.mySamples.size() == 2 && gs.diagnosis.countByType(1, Diagnosis.MY_SAMPLES) == 0) {
+								new Connect(1).print();
+								nextGs = gs.computeAction(new Connect(1));
+							} else {
+								new Connect(2).print();
+								nextGs = gs.computeAction(new Connect(2));
+							}
 						} else {
 							new Connect(1).print();
 							nextGs = gs.computeAction(new Connect(1));
@@ -157,13 +168,12 @@ class Robot {
 	private int score;
 	private Map<Mol, Integer> storage = new HashMap<>();
 	private Map<Mol, Integer> storageReserved = new HashMap<>();
-	Map<Mol, Integer> expertise = new HashMap<>();
+	Map<Mol, Integer> expertise = Utils.intToMap(0, 0, 0, 0, 0);
+	private List<Sample> reservedSamples = new ArrayList<>();
 
 	Robot() {
-		storageReserved.put(Mol.A, 0); storageReserved.put(Mol.B, 0); storageReserved.put(Mol.C, 0); storageReserved.put(
-				Mol.D,
-				0
-		); storageReserved.put(Mol.E, 0);
+		storageReserved.put(Mol.A, 0); storageReserved.put(Mol.B, 0); storageReserved.put(Mol.C, 0); storageReserved.put(Mol.D, 0);
+		storageReserved.put(Mol.E, 0);
 	}
 
 	Robot copy() {
@@ -173,15 +183,21 @@ class Robot {
 	}
 
 	void update(String target, int eta, int score, Map<Mol, Integer> storage, Map<Mol, Integer> expertise) {
-		this.target = target; this.eta = eta; this.score = score; this.storage = storage; this.expertise = expertise;
+		this.target = target; this.eta = eta; this.score = score; this.storage = storage; /*this.expertise = expertise;*/
 	}
 
-	private void updateExpertise(Sample validatedSample) { // For eval gamestate
-		if (validatedSample.expertiseGain == Mol.A) { expertise.put(Mol.A, expertise.get(Mol.A) + 1); } else if (validatedSample.expertiseGain
-				== Mol.B) { expertise.put(Mol.B, expertise.get(Mol.B) + 1); } else if (validatedSample.expertiseGain == Mol.C) {
+	void updateExpertise(Sample validatedSample) { // For eval gamestate
+		if (validatedSample.expertiseGain == Mol.A) {
+			expertise.put(Mol.A, expertise.get(Mol.A) + 1);
+		} else if (validatedSample.expertiseGain == Mol.B) {
+			expertise.put(Mol.B, expertise.get(Mol.B) + 1);
+		} else if (validatedSample.expertiseGain == Mol.C) {
 			expertise.put(Mol.C, expertise.get(Mol.C) + 1);
-		} else if (validatedSample.expertiseGain == Mol.D) { expertise.put(Mol.D, expertise.get(Mol.D) + 1); } else if (validatedSample.expertiseGain
-				== Mol.E) { expertise.put(Mol.E, expertise.get(Mol.E) + 1); }
+		} else if (validatedSample.expertiseGain == Mol.D) {
+			expertise.put(Mol.D, expertise.get(Mol.D) + 1);
+		} else if (validatedSample.expertiseGain == Mol.E) {
+			expertise.put(Mol.E, expertise.get(Mol.E) + 1);
+		}
 	}
 
 	Sample getUndiagnosedSample(List<Sample> samples) {
@@ -226,10 +242,24 @@ class Robot {
 
 	Mol getMolecule(List<Sample> samples, Molecules molecules) {
 		for (Sample sample : samples) {
-			if (sample.canProceed(molecules, this)) {
-				Mol molToTake = sample.getNextMolecule(this).get(0);
-				if (sample.validated) { updateExpertise(sample); }
-				return molToTake;
+			if (sample.rank == 3) {
+				if (sample.canProceed(molecules, this)) {
+					return sample.getNextMolecule(this).get(0);
+				}
+			}
+		}
+		for (Sample sample : samples) {
+			if (sample.rank == 2) {
+				if (sample.canProceed(molecules, this)) {
+					return sample.getNextMolecule(this).get(0);
+				}
+			}
+		}
+		for (Sample sample : samples) {
+			if (sample.rank == 1) {
+				if (sample.canProceed(molecules, this)) {
+					return sample.getNextMolecule(this).get(0);
+				}
 			}
 		}
 		return null;
@@ -270,18 +300,31 @@ class Robot {
 	}
 
 	Sample popValidatedSample(List<Sample> samples) {
-		for (Sample sample : samples) {
-			if (sample.validated) {
-				Sample sampleCopy = sample.copy();
-				samples.remove(sample);
-				unReserveMolecules(sampleCopy.cost);
-				return sampleCopy;
+		for (Sample reservedSample : reservedSamples) {
+			for (Sample sample : samples) {
+				if (sample.equals(reservedSample)) {
+					Sample sampleCopy = sample.copy();
+					samples.remove(sample);
+					reservedSamples.remove(reservedSample);
+					unReserveMolecules(sampleCopy.cost);
+					return sampleCopy;
+				}
 			}
+			//			if (sample.validated) {
+			//				Sample sampleCopy = sample.copy();
+			//				samples.remove(sample);
+			//				unReserveMolecules(sampleCopy.cost);
+			//				return sampleCopy;
+			//			}
 		}
 		return null;
 	}
 
 	void reserveMolecules(Map<Mol, Integer> cost) { storageReserved = Utils.addToMap(storageReserved, cost); }
+
+	void reserveSample(Sample sample) {
+		reservedSamples.add(sample);
+	}
 
 	private void unReserveMolecules(Map<Mol, Integer> cost) { storageReserved = Utils.removeFromMap(storageReserved, cost); }
 
@@ -307,28 +350,21 @@ class Robot {
 
 	void print() {
 		System.err.println("robot: target " + target + " eta " + eta + " score " + score);
-		System.err.println("robot storage: A "
-				+ getStorage(Mol.A)
-				+ " B "
-				+ getStorage(Mol.B)
-				+ " C "
-				+ getStorage(Mol.C)
-				+ " D "
-				+ getStorage(Mol.D)
-				+ " E "
-				+ getStorage(Mol.E));
-		System.err.println("robot storageReserved: A " + getStorageReserved(Mol.A) + " B " + getStorageReserved(Mol.B) + " C " + getStorageReserved(
-				Mol.C) + " D " + getStorageReserved(Mol.D) + " E " + getStorageReserved(Mol.E));
-		System.err.println("robot expertise: A "
-				+ getExpertise(Mol.A)
-				+ " B "
-				+ getExpertise(Mol.B)
-				+ " C "
-				+ getExpertise(Mol.C)
-				+ " D "
-				+ getExpertise(Mol.D)
-				+ " E "
-				+ getExpertise(Mol.E));
+		System.err.println("robot storage: A " + getStorage(Mol.A)
+				+ " B " + getStorage(Mol.B)
+				+ " C " + getStorage(Mol.C)
+				+ " D " + getStorage(Mol.D)
+				+ " E " + getStorage(Mol.E));
+		System.err.println("robot storageReserved: A " + getStorageReserved(Mol.A)
+				+ " B " + getStorageReserved(Mol.B)
+				+ " C " + getStorageReserved(Mol.C)
+				+ " D " + getStorageReserved(Mol.D)
+				+ " E " + getStorageReserved(Mol.E));
+		System.err.println("robot expertise: A " + getExpertise(Mol.A)
+				+ " B " + getExpertise(Mol.B)
+				+ " C " + getExpertise(Mol.C)
+				+ " D " + getExpertise(Mol.D)
+				+ " E " + getExpertise(Mol.E));
 	}
 }
 
@@ -336,7 +372,7 @@ class Robot {
 class Sample {
 	int sampleId;
 	int carriedBy;
-	private int rank;
+	int rank;
 	Mol expertiseGain;
 	int health;
 	Map<Mol, Integer> cost;
@@ -389,11 +425,17 @@ class Sample {
 	List<Mol> getNextMolecule(Robot robot) { // TODO return a list of needed molecules
 		List<Mol> moleculesNeeded = new ArrayList<>();
 
-		if (getCost(Mol.A) > robot.moleculesAvailable(Mol.A)) { moleculesNeeded.add(Mol.A); } else if (getCost(Mol.B)
-				> robot.moleculesAvailable(Mol.B)) { moleculesNeeded.add(Mol.B); } else if (getCost(Mol.C) > robot.moleculesAvailable(Mol.C)) {
+		if (getCost(Mol.A) > robot.moleculesAvailable(Mol.A)) {
+			moleculesNeeded.add(Mol.A);
+		} else if (getCost(Mol.B) > robot.moleculesAvailable(Mol.B)) {
+			moleculesNeeded.add(Mol.B);
+		} else if (getCost(Mol.C) > robot.moleculesAvailable(Mol.C)) {
 			moleculesNeeded.add(Mol.C);
-		} else if (getCost(Mol.D) > robot.moleculesAvailable(Mol.D)) { moleculesNeeded.add(Mol.D); } else if (getCost(Mol.E)
-				> robot.moleculesAvailable(Mol.E)) { moleculesNeeded.add(Mol.E); }
+		} else if (getCost(Mol.D) > robot.moleculesAvailable(Mol.D)) {
+			moleculesNeeded.add(Mol.D);
+		} else if (getCost(Mol.E) > robot.moleculesAvailable(Mol.E)) {
+			moleculesNeeded.add(Mol.E);
+		}
 
 		return moleculesNeeded;
 	}
@@ -403,6 +445,7 @@ class Sample {
 		if (validated && !reserved) {
 			reserved = true;
 			robot.reserveMolecules(cost);
+			robot.reserveSample(this);
 		}
 	}
 
@@ -420,32 +463,19 @@ class Sample {
 	public String toString() { return Integer.toString(sampleId); }
 
 	void print() {
-		System.err.println("id "
-				+ sampleId
-				+ " by "
-				+ carriedBy
-				+ " diagnosed "
-				+ diagnosed
-				+ " validated "
-				+ validated
-				+ " rank "
-				+ rank
-				+ " expert "
-				+ expertiseGain
-				+ " health "
-				+ health
-				+ " getCost(Mol.A) "
-				+ getCost(Mol.A)
-				+ " getCost(Mol.B) "
-				+ getCost(Mol.B)
-				+ " getCost(Mol.C) "
-				+ getCost(Mol.C)
-				+ " getCost(Mol.D) "
-				+ getCost(Mol.D)
-				+ " getCost(Mol.E) "
-				+ getCost(Mol.E)
-				+ " totalCost "
-				+ computeTotalCost());
+		System.err.println("id " + sampleId
+				+ " by " + carriedBy
+				+ " diagnosed " + diagnosed
+				+ " validated " + validated
+				+ " rank " + rank
+				+ " expert " + expertiseGain
+				+ " health " + health
+				+ " getCost(Mol.A) " + getCost(Mol.A)
+				+ " getCost(Mol.B) " + getCost(Mol.B)
+				+ " getCost(Mol.C) " + getCost(Mol.C)
+				+ " getCost(Mol.D) " + getCost(Mol.D)
+				+ " getCost(Mol.E) " + getCost(Mol.E)
+				+ " totalCost " + computeTotalCost());
 	}
 }
 
@@ -586,11 +616,11 @@ class Code4LifeGameState {
 
 
 class Diagnosis {
-	private static final int AVAILABLE = -1;
+	static final int AVAILABLE = -1;
 	static final int MY_SAMPLES = 0;
-	private static final int OPPONENT_SAMPLES = 1;
+	static final int OPPONENT_SAMPLES = 1;
 
-	private List<Sample> availableSamples = new ArrayList<>();
+	List<Sample> availableSamples = new ArrayList<>();
 	List<Sample> mySamples = new ArrayList<>();
 	List<Sample> opponentSamples = new ArrayList<>();
 
@@ -616,11 +646,29 @@ class Diagnosis {
 
 		for (Sample mySample : list) {
 			if (sample.carriedBy == MY_SAMPLES) {
+				boolean previouslyValidated = mySample.validated;
 				mySample.evaluateValidated(gs.myRobot);
+				if (!previouslyValidated && mySample.validated) {
+					gs.myRobot.updateExpertise(mySample);
+				}
 			} else if (sample.carriedBy == OPPONENT_SAMPLES) {
+				boolean previouslyValidated = mySample.validated;
 				mySample.evaluateValidated(gs.opponentRobot);
+				if (!previouslyValidated && mySample.validated) {
+					gs.opponentRobot.updateExpertise(mySample);
+				}
 			}
 		}
+	}
+
+	int countByType(int rank, int carriedBy) {
+		int count = 0;
+		for (Sample sample : get(carriedBy)) {
+			if (sample.rank == rank) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	List<Sample> get(int carrier) {
@@ -637,8 +685,8 @@ class Diagnosis {
 	}
 
 	void print() {
-		System.err.println("available samples: ");
-		for (Sample sample : get(AVAILABLE)) { sample.print(); }
+		//		System.err.println("available samples: ");
+		//		for (Sample sample : get(AVAILABLE)) { sample.print(); }
 		System.err.println("my samples: ");
 		for (Sample sample : get(MY_SAMPLES)) { sample.print(); }
 		System.err.println("opponent samples: ");
@@ -657,16 +705,11 @@ class Project {
 	private int get(Mol mol) { return values.get(mol); }
 
 	void print() {
-		System.err.println("project: A "
-				+ get(Mol.A)
-				+ " B "
-				+ get(Mol.B)
-				+ " C "
-				+ get(Mol.C)
-				+ " D "
-				+ get(Mol.D)
-				+ " E "
-				+ get(Mol.E));
+		System.err.println("project: A " + get(Mol.A)
+				+ " B " + get(Mol.B)
+				+ " C " + get(Mol.C)
+				+ " D " + get(Mol.D)
+				+ " E " + get(Mol.E));
 	}
 }
 
@@ -681,16 +724,11 @@ class Molecules {
 	int get(Mol mol) { return available.get(mol); }
 
 	void print() {
-		System.err.println("project: A "
-				+ get(Mol.A)
-				+ " B "
-				+ get(Mol.B)
-				+ " C "
-				+ get(Mol.C)
-				+ " D "
-				+ get(Mol.D)
-				+ " E "
-				+ get(Mol.E));
+		System.err.println("project: A " + get(Mol.A)
+				+ " B " + get(Mol.B)
+				+ " C " + get(Mol.C)
+				+ " D " + get(Mol.D)
+				+ " E " + get(Mol.E));
 	}
 }
 
